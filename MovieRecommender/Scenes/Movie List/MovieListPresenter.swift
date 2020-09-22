@@ -12,18 +12,22 @@
 
 import UIKit
 
-protocol MovieListPresentationLogic {
-    func presentSomething(_ response: MovieList.Something.Response)
+protocol MovieListPresentationLogic: LoadingLogic {
+    func presentPopularMovies(_ response: MovieList.FetchPopularMovies.Response)
+    func presentSelectedMovie()
 }
 
 class MovieListPresenter: MovieListPresentationLogic {
-    
+    var loadable: HasLoadingView? { return viewController }
+
     weak var viewController: MovieListDisplayLogic?
-    
-    // MARK: Do something
-    
-    func presentSomething(_ response: MovieList.Something.Response) {
-        let viewModel = MovieList.Something.ViewModel()
-        viewController?.displaySomething(viewModel)
+
+    // MARK: Presentation Logic
+    func presentPopularMovies(_ response: MovieList.FetchPopularMovies.Response) {
+        viewController?.displayPopularMovies(response)
+    }
+
+    func presentSelectedMovie() {
+        viewController?.displaySelectedMovie()
     }
 }

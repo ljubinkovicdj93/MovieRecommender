@@ -12,18 +12,39 @@
 
 import UIKit
 
-protocol MovieDetailsPresentationLogic {
-    func presentSomething(_ response: MovieDetails.Something.Response)
+protocol MovieDetailsPresentationLogic: LoadingLogic {
+    func presentInitialState(_ response: MovieDetails.InitialState.Response)
+    func presentPlayMovieTrailer(_ response: MovieDetails.PlayMovie.Response)
 }
 
 class MovieDetailsPresenter: MovieDetailsPresentationLogic {
-    
+    var loadable: HasLoadingView? { return viewController }
+
     weak var viewController: MovieDetailsDisplayLogic?
-    
-    // MARK: Do something
-    
-    func presentSomething(_ response: MovieDetails.Something.Response) {
-        let viewModel = MovieDetails.Something.ViewModel()
-        viewController?.displaySomething(viewModel)
+
+    // MARK: Presentation Logic
+    func presentInitialState(_ response: MovieDetails.InitialState.Response) {
+        let movieThumbnailStyle = ViewStyle<UIImageView> {
+            guard let imgUrl = response.movie.imageUrl else { return }
+            $0.loadImage(at: imgUrl)
+        }
+        let movieTitleStyle = ViewStyle<UILabel> {
+            $0.text = response.movie.title
+        }
+        let movieSummaryStyle = ViewStyle<UILabel> {
+            $0.text = response.movie.summary
+        }
+
+        let viewModel = MovieDetails.InitialState.ViewModel(
+            movieThumbnailStyle: movieThumbnailStyle,
+            movieTitleStyle: movieTitleStyle,
+            movieSummaryStyle: movieSummaryStyle
+        )
+        viewController?.displayInitialState(viewModel)
+    }
+
+    func presentPlayMovieTrailer(_ response: MovieDetails.PlayMovie.Response) {
+        viewController?.displayPlayMovieTrailer(response)
     }
 }
+

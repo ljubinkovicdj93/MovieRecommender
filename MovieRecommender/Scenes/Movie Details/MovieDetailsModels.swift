@@ -10,17 +10,29 @@
 //  see http://clean-swift.com
 //
 
+import SafariServices
 import UIKit
 
 struct MovieDetails {
     // MARK: Use cases
-    
-    struct Something {
-        struct Request {
-        }
+
+    struct InitialState {
         struct Response {
+            let movie: Movie
         }
+
         struct ViewModel {
+            let movieThumbnailStyle: ViewStyle<UIImageView>
+            let movieTitleStyle: ViewStyle<UILabel>
+            let movieSummaryStyle: ViewStyle<UILabel>
         }
+    }
+
+    struct PlayMovie {
+        struct Response {
+            let webViewController: SFSafariViewController
+        }
+
+        typealias ViewModel = Response
     }
 }

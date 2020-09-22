@@ -13,7 +13,7 @@
 import UIKit
 
 protocol MovieListRoutingNavigation {
-    func showNewScreen()
+    func showMovieDetails()
 }
 
 protocol MovieListDataPassing {
@@ -24,25 +24,25 @@ protocol MovieListDataPassing {
 typealias MovieListRouterInput = MovieListRoutingNavigation & MovieListDataPassing
 
 class MovieListRouter: MovieListRouterInput {
-    
+
     private struct Segues {
-        static let ShowNextScreenIdentifier = ""
+        static let showMovieDetailsIdentifier = "showMovieDetails"
     }
-    
+
     var dataStore: MovieListDataStore?
     weak var viewController: MovieListViewController?
-    
+
     // MARK: Navigation
-    
-    func showNewScreen() {
-        viewController?.performSegue(withIdentifier: Segues.ShowNextScreenIdentifier, sender: nil)
+    func showMovieDetails() {
+        viewController?.performSegue(withIdentifier: Segues.showMovieDetailsIdentifier, sender: nil)
     }
-    
+
     // MARK: Passing data
-    
     func passDataToNextScene(segue: UIStoryboardSegue) {
-        if segue.identifier == Segues.ShowNextScreenIdentifier {
-            // Pass Relevant Data
+        if segue.identifier == Segues.showMovieDetailsIdentifier,
+           let movieDetailsViewController = segue.destination as? MovieDetailsViewController {
+
+            movieDetailsViewController.router?.dataStore?.movie = dataStore?.selectedMovie
         }
     }
 }

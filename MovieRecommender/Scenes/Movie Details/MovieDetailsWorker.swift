@@ -10,10 +10,13 @@
 //  see http://clean-swift.com
 //
 
-import UIKit
+import Foundation
 
 class MovieDetailsWorker {
-    
-    func doSomeWork() {
+
+    let networkService = URLNetworkService(configuration: MovieDatabaseConfiguration.shared.apiConfiguration)
+
+    func getMovieInformation(for movie: Movie, completion: @escaping (Swift.Result<GetVideosForMovieResponseModel, Error>) -> Void) {
+        GetVideosForMovieOperation(movie: movie).execute(in: networkService, completion: completion)
     }
 }

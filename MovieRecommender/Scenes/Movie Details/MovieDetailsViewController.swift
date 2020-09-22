@@ -12,42 +12,56 @@
 
 import UIKit
 
-protocol MovieDetailsDisplayLogic: class {
-    func displaySomething(_ viewModel: MovieDetails.Something.ViewModel)
+protocol MovieDetailsDisplayLogic: HasLoadingView {
+    func displayInitialState(_ viewModel: MovieDetails.InitialState.ViewModel)
+    func displayPlayMovieTrailer(_ viewModel: MovieDetails.PlayMovie.ViewModel)
 }
 
-class MovieDetailsViewController: UIViewController, MovieDetailsDisplayLogic {
-    
+class MovieDetailsViewController: UIViewController {
+
     // MARK: - Properties
     var interactor: MovieDetailsBusinessLogic?
     var router: MovieDetailsRouterInput?
-    
-    // Mark: - Outlets
-    
-    //@IBOutlet weak var nameTextField: UITextField!
-    
+
+    // MARK: - Outlets
+    @IBOutlet weak var movieThumbnail: UIImageView!
+    @IBOutlet weak var movieTitleLabel: UILabel!
+    @IBOutlet weak var movieSummary: UILabel!
+
     // MARK: - Object Lifecycle
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         MovieDetailsConfigurator.sharedInstance.configure(self)
     }
-    
+
     // MARK: - View lifecycle
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        doSomething()
+
+        interactor?.requestInitialState()
     }
-    
-    // MARK: - Do something
-    
-    func doSomething() {
-        let request = MovieDetails.Something.Request()
-        interactor?.doSomething(request)
+}
+
+// MARK: - IBActions
+extension MovieDetailsViewController {
+    @IBAction func onPlayTapped(_ sender: UIButton) {
+        interactor?.playMovieTrailer()
     }
-    
-    func displaySomething(_ viewModel: MovieDetails.Something.ViewModel) {
-        //nameTextField.text = viewModel.name
+
+    @IBAction func onCloseTapped(_ sender: UIButton) {
+        dismiss(animated: true, completion: nil)
+    }
+}
+
+// MARK: - Display Logic
+extension MovieDetailsViewController: MovieDetailsDisplayLogic {
+    func displayInitialState(_ viewModel: MovieDetails.InitialState.ViewModel) {
+        viewModel.movieThumbnailStyle.apply(to: movieThumbnail)
+        viewModel.movieTitleStyle.apply(to: movieTitleLabel)
+        viewModel.movieSummaryStyle.apply(to: movieSummary)
+    }
+
+    func displayPlayMovieTrailer(_ viewModel: MovieDetails.PlayMovie.ViewModel) {
+        present(viewModel.webViewController, animated: true)
     }
 }

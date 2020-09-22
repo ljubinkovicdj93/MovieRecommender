@@ -13,27 +13,51 @@
 import UIKit
 
 protocol MovieListBusinessLogic {
-    func doSomething(_ request: MovieList.Something.Request)
+    func fetchPopularMovies()
+    func selectMovie(_ request: MovieList.SelectMovie.Request)
 }
 
 protocol MovieListDataStore {
-    //var name: String { get set }
+    var selectedMovie: Movie? { get set }
 }
 
 class MovieListInteractor: MovieListBusinessLogic, MovieListDataStore {
-    
+    var selectedMovie: Movie?
+
     var presenter: MovieListPresentationLogic?
-    lazy var worker: MovieListWorker? = {
-        return MovieListWorker()
-    }()
-    //var name: String = ""
-    
-    // MARK: Do something
-    
-    func doSomething(_ request: MovieList.Something.Request) {
-        worker?.doSomeWork()
-        
-        let response = MovieList.Something.Response()
-        presenter?.presentSomething(response)
+    lazy var worker = MovieListWorker()
+
+    // MARK: Business Logic
+
+    func fetchPopularMovies() {
+        presenter?.startLoading()
+        worker.fetchPopularMovies { [weak self] result in guard let self = self else { return }
+            defer {
+                DispatchQueue.main.async {
+                    self.presenter?.stopLoading()
+                }
+            }
+
+            switch result {
+                case let .success(moviesResponse):
+                    let sortedByPopularityDescending = moviesResponse.popularMovies.sorted(by: { $0.popularity > $1.popularity })
+
+                    DispatchQueue.main.async {
+                        let response = MovieList.FetchPopularMovies.Response(popularMovies: sortedByPopularityDescending)
+                        self.presenter?.presentPopularMovies(response)
+                    }
+                case let .failure(error):
+                    #warning("TODO: Ideally present an error view to indicate that fetching failed.")
+                    print(error.localizedDescription)
+//                    DispatchQueue.main.async {
+//                        self.presenter?.presentError()
+//                    }
+            }
+        }
+    }
+
+    func selectMovie(_ request: MovieList.SelectMovie.Request) {
+        self.selectedMovie = request.selectedMovie
+        presenter?.presentSelectedMovie()
     }
 }

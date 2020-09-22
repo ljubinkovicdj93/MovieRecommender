@@ -10,17 +10,24 @@
 //  see http://clean-swift.com
 //
 
-import UIKit
+import Foundation
 
 struct MovieList {
     // MARK: Use cases
-    
-    struct Something {
-        struct Request {
-        }
+
+    let sortedPopularMovies: [Movie]
+
+    struct FetchPopularMovies {
         struct Response {
+            let popularMovies: [Movie]
         }
-        struct ViewModel {
+
+        typealias ViewModel = Response
+    }
+
+    struct SelectMovie {
+        struct Request {
+            let selectedMovie: Movie
         }
     }
 }

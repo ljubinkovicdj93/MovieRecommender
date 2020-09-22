@@ -12,42 +12,54 @@
 
 import UIKit
 
-protocol MovieListDisplayLogic: class {
-    func displaySomething(_ viewModel: MovieList.Something.ViewModel)
+protocol MovieListDisplayLogic: HasLoadingView {
+    func displayPopularMovies(_ viewModel: MovieList.FetchPopularMovies.ViewModel)
+    func displaySelectedMovie()
 }
 
-class MovieListViewController: UIViewController, MovieListDisplayLogic {
-    
+class MovieListViewController: UIViewController {
+
     // MARK: - Properties
     var interactor: MovieListBusinessLogic?
     var router: MovieListRouterInput?
-    
-    // Mark: - Outlets
-    
-    //@IBOutlet weak var nameTextField: UITextField!
-    
+
+    private var moviesDataSource: MoviesDataSource? {
+        didSet {
+            tableView.reloadData()
+        }
+    }
+
+    // MARK: - Outlets
+    @IBOutlet weak var tableView: UITableView! {
+        didSet {
+            tableView.registerCell(with: MovieCell.self)
+        }
+    }
+
     // MARK: - Object Lifecycle
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         MovieListConfigurator.sharedInstance.configure(self)
     }
-    
+
     // MARK: - View lifecycle
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        doSomething()
+        interactor?.fetchPopularMovies()
     }
-    
-    // MARK: - Do something
-    
-    func doSomething() {
-        let request = MovieList.Something.Request()
-        interactor?.doSomething(request)
+}
+
+// MARK: - Display Logic
+extension MovieListViewController: MovieListDisplayLogic {
+    func displayPopularMovies(_ viewModel: MovieList.FetchPopularMovies.ViewModel) {
+        self.moviesDataSource = MoviesDataSource(tableView: tableView, array: viewModel.popularMovies)
+        self.moviesDataSource!.registerDidSelect { [weak self] movie, _ in guard let self = self else { return }
+            guard let selectedMovie = movie else { return }
+            self.interactor?.selectMovie(MovieList.SelectMovie.Request(selectedMovie: selectedMovie))
+        }
     }
-    
-    func displaySomething(_ viewModel: MovieList.Something.ViewModel) {
-        //nameTextField.text = viewModel.name
+
+    func displaySelectedMovie() {
+        router?.showMovieDetails()
     }
 }

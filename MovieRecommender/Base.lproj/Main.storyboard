@@ -31,6 +31,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="tableView" destination="V6F-jY-qcd" id="5y0-nB-Cbg"/>
                         <segue destination="VuL-oK-0uD" kind="show" identifier="showMovieDetails" id="NgY-5C-sVG"/>
                     </connections>
                 </viewController>
@@ -51,10 +52,16 @@
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="close" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Lz-Pw-tVL">
                                 <rect key="frame" x="20" y="20" width="30" height="30"/>
+                                <connections>
+                                    <action selector="onCloseTapped:" destination="VuL-oK-0uD" eventType="touchUpInside" id="3yu-nH-l91"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="juo-L7-RtO">
                                 <rect key="frame" x="16" y="347.5" width="382" height="30"/>
                                 <state key="normal" title="Play"/>
+                                <connections>
+                                    <action selector="onPlayTapped:" destination="VuL-oK-0uD" eventType="touchUpInside" id="cMZ-Rx-OBK"/>
+                                </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2b7-1J-kNB">
                                 <rect key="frame" x="16" y="393.5" width="382" height="21"/>
@@ -90,6 +97,11 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="qR4-oW-bw7"/>
+                    <connections>
+                        <outlet property="movieSummary" destination="eC0-Ye-w5t" id="zNY-H4-waJ"/>
+                        <outlet property="movieThumbnail" destination="eFh-Qh-SiA" id="hPX-2a-IAb"/>
+                        <outlet property="movieTitleLabel" destination="2b7-1J-kNB" id="jOp-0I-Uo6"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WYL-8W-kXF" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

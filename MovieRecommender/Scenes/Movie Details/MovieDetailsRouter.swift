@@ -24,22 +24,22 @@ protocol MovieDetailsDataPassing {
 typealias MovieDetailsRouterInput = MovieDetailsRoutingNavigation & MovieDetailsDataPassing
 
 class MovieDetailsRouter: MovieDetailsRouterInput {
-    
+
     private struct Segues {
         static let ShowNextScreenIdentifier = ""
     }
-    
+
     var dataStore: MovieDetailsDataStore?
     weak var viewController: MovieDetailsViewController?
-    
+
     // MARK: Navigation
-    
+
     func showNewScreen() {
         viewController?.performSegue(withIdentifier: Segues.ShowNextScreenIdentifier, sender: nil)
     }
-    
+
     // MARK: Passing data
-    
+
     func passDataToNextScene(segue: UIStoryboardSegue) {
         if segue.identifier == Segues.ShowNextScreenIdentifier {
             // Pass Relevant Data

@@ -10,30 +10,57 @@
 //  see http://clean-swift.com
 //
 
+import SafariServices
 import UIKit
 
 protocol MovieDetailsBusinessLogic {
-    func doSomething(_ request: MovieDetails.Something.Request)
+    func requestInitialState()
+    func playMovieTrailer()
 }
 
 protocol MovieDetailsDataStore {
-    //var name: String { get set }
+    var movie: Movie? { get set }
 }
 
 class MovieDetailsInteractor: MovieDetailsBusinessLogic, MovieDetailsDataStore {
-    
+    var movie: Movie?
+
     var presenter: MovieDetailsPresentationLogic?
-    lazy var worker: MovieDetailsWorker? = {
-        return MovieDetailsWorker()
-    }()
-    //var name: String = ""
-    
-    // MARK: Do something
-    
-    func doSomething(_ request: MovieDetails.Something.Request) {
-        worker?.doSomeWork()
-        
-        let response = MovieDetails.Something.Response()
-        presenter?.presentSomething(response)
+    lazy var worker = MovieDetailsWorker()
+
+    // MARK: Business Logic
+    func requestInitialState() {
+        guard self.movie != nil else { return }
+
+        presenter?.startLoading()
+        worker.getMovieInformation(for: self.movie!) { [weak self] result in guard let self = self else { return }
+            defer {
+                DispatchQueue.main.async {
+                    self.presenter?.stopLoading()
+                }
+            }
+
+            switch result {
+                case let .success(videoResponse):
+                    DispatchQueue.main.async {
+                        self.movie?.videos = videoResponse.videos
+                        self.presenter?.presentInitialState(MovieDetails.InitialState.Response(movie: self.movie!))
+                    }
+                case let .failure(error):
+                    #warning("TODO: Handle error")
+                    print(error.localizedDescription)
+            }
+        }
+    }
+
+    func playMovieTrailer() {
+        guard let movieTrailerUrl = self.movie?.videos.first(where: { $0.site == .some(.youTube) })?.youTubeUrl else { return }
+
+        let config = SFSafariViewController.Configuration()
+
+        let sfSafariViewController = SFSafariViewController(url: movieTrailerUrl, configuration: config)
+
+        let response = MovieDetails.PlayMovie.Response(webViewController: sfSafariViewController)
+        presenter?.presentPlayMovieTrailer(response)
     }
 }
