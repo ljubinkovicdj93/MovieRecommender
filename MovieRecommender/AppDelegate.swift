@@ -7,6 +7,8 @@
 
 import UIKit
 
+let movieDbAccessToken: String = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhMDAxYzc5MmIwN2FkYTU4Y2ZmMWYxODQwMGIwYWMwMyIsInN1YiI6IjVmNjc1ODk0ZjcwNmRlMDAzMjlhMTYwNSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.LvrrdhbtjNjLzZfiD6eplSAsswoZQWkm9fvqziU_6HI"
+
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
